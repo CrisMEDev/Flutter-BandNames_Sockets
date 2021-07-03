@@ -3,12 +3,12 @@ class Band {
 
   String id;
   String name;
-  int? votes = 0;
+  int? votes;
 
   Band({
     required this.id,
     required this.name,
-    this.votes
+    this.votes = 0
   });
 
   factory Band.fromMap( Map<String, dynamic> obj )
