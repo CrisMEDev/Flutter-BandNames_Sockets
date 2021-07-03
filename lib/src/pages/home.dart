@@ -51,23 +51,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Column _bandTile( Band band, Size screenSize ) {
-    return Column(
-      children: [
-        ListTile(
-          leading: CircleAvatar(
-            child: Text( band.name[0], style: TextStyle( color: Colors.white ), ),
-            backgroundColor: Colors.teal,
+  Widget _bandTile( Band band, Size screenSize ) {
+    return Dismissible(
+      key: Key(band.id),
+      direction: DismissDirection.startToEnd,
+      background: Container( color: Colors.teal ),
+      onDismissed: ( direction ){
+        // TODO: Borrar en el server
+        print(direction);
+      },
+
+      child: Column(
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              child: Text( band.name[0], style: TextStyle( color: Colors.white ), ),
+              backgroundColor: Colors.teal,
+            ),
+    
+            title: Text( band.name, style: TextStyle( fontSize: screenSize.width * 0.05 ) ),
+    
+            trailing: Text( '${ band.votes }', style: TextStyle( fontSize: screenSize.width * 0.05 ) ),
+    
+            onTap: (){},
           ),
-
-          title: Text( band.name, style: TextStyle( fontSize: screenSize.width * 0.05 ) ),
-
-          trailing: Text( '${ band.votes }', style: TextStyle( fontSize: screenSize.width * 0.05 ) ),
-
-          onTap: (){},
-        ),
-        Divider()
-      ],
+          Divider()
+        ],
+      ),
     );
   }
 
