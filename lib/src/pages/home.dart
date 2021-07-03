@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:band_names_sockets/src/models/band.dart';
@@ -42,7 +45,7 @@ class _HomePageState extends State<HomePage> {
           child: Icon( Icons.add ),
           elevation: 0,
           backgroundColor: Colors.teal,
-          onPressed: (){}
+          onPressed: addNewBand
         ),
       ),
     );
@@ -67,4 +70,74 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
+  addNewBand(){
+
+    final textController = new TextEditingController();
+
+    if ( Platform.isAndroid ){
+
+      showDialog(
+        context: context,
+        builder: ( context ){
+          return AlertDialog(
+            title: Text('New band name:'),
+            content: TextField(
+              controller: textController,
+            ),
+            actions: [
+              MaterialButton(
+                child: Text('Add'),
+                textColor: Colors.teal,
+                onPressed: () => addBandToList( textController.text )
+              )
+            ],
+          );
+        }
+      );
+
+    }
+
+    // Alert dialog con el estilo propio para ios
+    if ( Platform.isIOS ){
+      showCupertinoDialog(
+        context: context,
+        builder: ( context ) {
+          return CupertinoAlertDialog(
+            title: Text('New band name:'),
+            content: CupertinoTextField(
+              controller: textController,
+            ),
+
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text('Add'),
+                onPressed: () => addBandToList( textController.text )
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                child: Text('Dismiss'),
+                onPressed: () => Navigator.pop(context)
+              )
+            ],
+          );
+        }
+      );
+    }
+
+
+  }
+
+  void addBandToList( String name ){
+    if ( name.length > 1 ){
+      // Se agrega a la lista
+      this.bands.add(new Band(id: DateTime.now().toString(), name: name));
+    }
+
+    setState(() {});
+
+    Navigator.pop(context);
+  }
+
 }
