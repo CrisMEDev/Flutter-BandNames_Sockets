@@ -43,7 +43,16 @@ class SocketService with ChangeNotifier{
       notifyListeners();
     });
 
-    // socket.on('fromServer', (_) => print(_));
+    socket.on( 'nuevo-mensaje', ( payload ) {
+
+      if ( payload.containsKey('nombre') ){
+
+        print('nuevo-mensaje: Heeey!!! ' + payload['nombre']);
+
+      }
+
+
+    });
 
   }
   
