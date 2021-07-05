@@ -93,9 +93,11 @@ class _HomePageState extends State<HomePage> {
       key: Key(band.id),
       direction: DismissDirection.startToEnd,
       background: Container( color: Colors.teal ),
-      onDismissed: ( direction ){
-        // TODO: Borrar en el server
-        print(direction);
+      onDismissed: ( _ ){
+        // Borrar banda en el server
+        final socketService = Provider.of<SocketService>(context, listen: false);
+
+        socketService.socket.emit('delete-band', { 'id': band.id });
       },
 
       child: Column(
@@ -185,8 +187,10 @@ class _HomePageState extends State<HomePage> {
 
   void addBandToList( String name ){
     if ( name.length > 1 ){
-      // Se agrega a la lista
-      this.bands.add(new Band(id: DateTime.now().toString(), name: name));
+      final socketService = Provider.of<SocketService>(context, listen: false);
+
+      // Se manda la banda para ser agregada por el server
+      socketService.socket.emit('add-band', { 'name': name });
     }
 
     setState(() {});
