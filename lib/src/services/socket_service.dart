@@ -45,18 +45,6 @@ class SocketService with ChangeNotifier{
       notifyListeners();
     });
 
-    // Escuchar mensaje del server
-    // this._socket.on( 'nuevo-mensaje', ( payload ) {
-
-    //   if ( payload.containsKey('nombre') ){
-
-    //     print('nuevo-mensaje: Heeey!!! ' + payload['nombre']);
-
-    //   }
-    // });
-
-    //
-
   }
   
 }

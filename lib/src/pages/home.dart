@@ -16,12 +16,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<Band> bands = [
-    Band(id: '1', name: 'Metallica', votes: 4),
-    Band(id: '2', name: 'Héroes del silencio', votes: 3),
-    Band(id: '3', name: 'Los rumberos'),
-    Band(id: '4', name: 'The score', votes: 7),
-  ];
+  List<Band> bands = [];
+
+  @override
+  void initState() {
+    
+    final socketService = Provider.of<SocketService>(context, listen: false);
+
+    socketService.socket.on('active-bands', ( payload ) => {
+
+      // Se castea payload a List para que el editor reconozca el método map
+      this.bands = ( payload as List )
+        .map( ( mapBand ) => Band.fromMap(mapBand) )
+        .toList(),
+
+        setState((){})
+
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+
+    final socketService = Provider.of<SocketService>(context, listen: false);
+
+    socketService.socket.off('active-bands');
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
