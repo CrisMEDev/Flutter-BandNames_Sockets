@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:band_names_sockets/src/services/socket_service.dart';
 import 'package:band_names_sockets/src/models/band.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     final screenSize = MediaQuery.of(context).size;
+    final socketService = Provider.of<SocketService>(context);
 
     return SafeArea(
       child: Scaffold(
@@ -33,6 +36,16 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           elevation: 2,
           centerTitle: true,
+
+          actions: [
+            Container(
+              margin: EdgeInsets.only( right: 10.0 ),
+              child: ( socketService.serverStatus == ServerStatus.Online )
+                ? Icon( Icons.check_circle, color: Colors.teal[200] )
+                : Icon( Icons.offline_bolt, color: Colors.red[200] )
+                
+            )
+          ],
         ),
         body: ListView.builder(
           physics: BouncingScrollPhysics(),

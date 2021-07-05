@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Band names',
         
-      initialRoute: 'status',
+      initialRoute: 'home',
     
       routes: {
       'home':       ( _ ) => HomePage(),
