@@ -110,7 +110,14 @@ class _HomePageState extends State<HomePage> {
     
             trailing: Text( '${ band.votes }', style: TextStyle( fontSize: screenSize.width * 0.05 ) ),
     
-            onTap: (){},
+            onTap: (){
+
+              final socketService = Provider.of<SocketService>(context, listen: false);
+
+              // Votar por una banda
+              socketService.socket.emit('vote-band', { 'id': band.id });
+
+            },
           ),
           Divider()
         ],
