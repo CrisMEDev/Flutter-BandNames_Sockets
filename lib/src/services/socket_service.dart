@@ -14,8 +14,10 @@ enum ServerStatus{
 class SocketService with ChangeNotifier{
 
   ServerStatus _serverStatus = ServerStatus.Connecting;
+  late IO.Socket _socket;
 
-  get serverStatus => this._serverStatus;
+  ServerStatus get serverStatus => this._serverStatus;
+  IO.Socket get socket => this._socket;   // Ahora se pueden crear llamadas al on emit y off desde cualquier instancia de la clase
 
   SocketService(){
     this._initConfig();
@@ -24,35 +26,36 @@ class SocketService with ChangeNotifier{
   void _initConfig(){
 
     // Dart client
-    IO.Socket socket = IO.io( ipAddress ,
+    this._socket = IO.io( ipAddress ,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .enableAutoConnect()
           .build()
     );
 
-    socket.onConnect((_) {
+    this._socket.onConnect((_) {
       // print('Conectado');
       this._serverStatus = ServerStatus.Online;
       notifyListeners();
     });
 
-    socket.onDisconnect((_) {
+    this._socket.onDisconnect((_) {
       // print('Desconectado');
       this._serverStatus = ServerStatus.Offline;
       notifyListeners();
     });
 
-    socket.on( 'nuevo-mensaje', ( payload ) {
+    // Escuchar mensaje del server
+    // this._socket.on( 'nuevo-mensaje', ( payload ) {
 
-      if ( payload.containsKey('nombre') ){
+    //   if ( payload.containsKey('nombre') ){
 
-        print('nuevo-mensaje: Heeey!!! ' + payload['nombre']);
+    //     print('nuevo-mensaje: Heeey!!! ' + payload['nombre']);
 
-      }
+    //   }
+    // });
 
-
-    });
+    //
 
   }
   
