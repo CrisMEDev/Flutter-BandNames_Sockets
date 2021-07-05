@@ -15,3 +15,6 @@ String ipAddress = 'MyAwesomeServerAddress';                // En el caso de ser
 
 [socket_io client](https://pub.dev/packages/socket_io_client)
 [provider](https://pub.dev/packages/provider)
+[pie_chart](https://pub.dev/packages/pie_chart)
+
+[Enlace al código del server](https://github.com/CrisMEDev/Node-BandNames_Server)

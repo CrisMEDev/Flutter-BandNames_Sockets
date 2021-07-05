@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 import 'package:band_names_sockets/src/services/socket_service.dart';
 import 'package:band_names_sockets/src/models/band.dart';
@@ -23,18 +24,18 @@ class _HomePageState extends State<HomePage> {
     
     final socketService = Provider.of<SocketService>(context, listen: false);
 
-    socketService.socket.on('active-bands', ( payload ) => {
-
-      // Se castea payload a List para que el editor reconozca el método map
-      this.bands = ( payload as List )
-        .map( ( mapBand ) => Band.fromMap(mapBand) )
-        .toList(),
-
-        setState((){})
-
-    });
+    socketService.socket.on('active-bands', _handleActiveBands );
 
     super.initState();
+  }
+
+  _handleActiveBands( dynamic payload ){
+    // Se castea payload a List para que el editor reconozca el método map
+      this.bands = ( payload as List )
+        .map( ( mapBand ) => Band.fromMap(mapBand) )
+        .toList();
+
+        setState((){});
   }
 
   @override
@@ -71,11 +72,27 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
-        body: ListView.builder(
-          physics: BouncingScrollPhysics(),
+        body: Column(
 
-          itemCount: bands.length,
-          itemBuilder: ( context, index ) => _bandTile( bands[index], screenSize )
+          children: [
+
+            (bands.isNotEmpty)
+              ? _PieGraph( bands: this.bands, )
+              : Text(
+                  'No hay bandas',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+
+
+            Expanded(
+              child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+
+                itemCount: bands.length,
+                itemBuilder: ( context, index ) => _bandTile( bands[index], screenSize )
+              ),
+            ),
+          ],
         ),
 
         floatingActionButton: FloatingActionButton(
@@ -198,4 +215,61 @@ class _HomePageState extends State<HomePage> {
     Navigator.pop(context);
   }
 
+}
+
+class _PieGraph extends StatelessWidget {
+
+  final List<Band> bands;
+
+  const _PieGraph({
+    Key? key,
+    required this.bands
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    Map<String, double> dataMap = {};
+
+    bands.forEach((element) {
+      dataMap.putIfAbsent( element.name , () => element.votes!.toDouble() );
+    });
+
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.all(20.0),
+
+          child: PieChart(
+            dataMap: dataMap,
+            animationDuration: Duration(milliseconds: 800),
+            chartLegendSpacing: 30,
+            chartRadius: MediaQuery.of(context).size.width * 0.35,
+            initialAngleInDegree: 0,
+            chartType: ChartType.ring,
+            ringStrokeWidth: 32,
+            centerText: 'Bands',
+            legendOptions: LegendOptions(
+              showLegendsInRow: false,
+              legendPosition: LegendPosition.right,
+              showLegends: true,
+              legendShape: BoxShape.circle,
+              legendTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            chartValuesOptions: ChartValuesOptions(
+              showChartValueBackground: true,
+              chartValueBackgroundColor: Colors.teal[50],
+              showChartValues: true,
+              showChartValuesInPercentage: false,
+              showChartValuesOutside: false,
+              decimalPlaces: 0,
+            ),
+          ),
+        ),
+        Divider( color: Colors.teal, thickness: 1.0 )
+      ],
+    );
+  }
 }
